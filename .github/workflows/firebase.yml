@@ -1,13 +1,13 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-#TESTING
-name: firebase CI
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Firebase CI
 
 on:
   push:
-    branches: [ "LiveFirebase" ]
+    branches: [ master ]
   pull_request:
-    branches: [ "LiveFirebase" ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -52,4 +52,4 @@ jobs:
         with:
           args: deploy --only hosting
         env:
-          FIREBASE_TOKEN: ${{ 1//0fLHBzYnPJmc3CgYIARAAGA8SNwF-L9IrI3woYaR54145cvuzUqUlJBSN91D72oowUOlGFIxhqMC8nl5ljlbZ32IMwibT4H980-s }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
