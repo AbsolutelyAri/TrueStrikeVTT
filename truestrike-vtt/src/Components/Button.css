@@ -1,0 +1,15 @@
+.rounded-button {
+    background-color: red; /* Button background color */
+    color: white; /* Button text color */
+    padding: 10px 20px; /* Button padding */
+    border: none; /* Remove default border */
+    border-radius: 20px; /* Rounded borders */
+    cursor: pointer; /* Change mouse cursor on hover */
+    font-size: 16px; /* Text size */
+    transition: background-color 0.3s; /* Smooth background color transition */
+  }
+  
+  .rounded-button:hover {
+    background-color: darkred; /* Darker shade when hovered */
+  }
+  
