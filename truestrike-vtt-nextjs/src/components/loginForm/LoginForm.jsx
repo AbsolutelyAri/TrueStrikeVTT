@@ -5,6 +5,16 @@ import { useRouter } from 'next/navigation';
 const LoginForm = ({isOpen, setIsOpen}) => {
     const router = useRouter()
 
+    const [username, setUsername] = useState(''); // username state variable and setUsername function to update it
+    const [password, setPassword] = useState(''); // password state variable and setPassword function to update it
+  
+    // Function to handle login button click
+    const handleLogin = () => {
+      // Here you can perform your login validation logic
+      console.log("Username:", username); // Log the username to the console
+      console.log("Password:", password); // Log the password to the console
+    };
+
     const handleClose = () => {
         setIsOpen(false)
         if(router.pathname !== '/'){
