@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 const Authentication = () => {
   const [username, setUsername] = useState(''); // username state variable and setUsername function to update it
