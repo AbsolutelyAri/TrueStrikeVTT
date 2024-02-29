@@ -10,7 +10,7 @@ const Navbar = () => {
             <div className="container mx-auto flex justify-between items-center">
                 <div className="text-lg font-bold">TrueStrike VTT</div>
                 <div className="md:flex items-center">
-                    <Link href="/upload-maps">
+                    <Link href="/gameboard">
                         <div className={navbarMenuItem}>
                             Upload Map
                         </div>
