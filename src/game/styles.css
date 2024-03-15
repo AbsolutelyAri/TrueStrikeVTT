@@ -1,0 +1,25 @@
+.card {
+    height: 100%;
+    display: block;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.rootElem {
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(83,71,71,1) 0%, rgba(8,1,1,1) 100%);
+}
+
+.card_body {
+    display: flex;
+    height: 100%;
+}
+
+.card_right-column {
+    flex: 3;
+    overflow: auto;
+    padding-right: 16px;
+    padding-bottom: 50px;
+}
