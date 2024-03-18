@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useMemo } from "react";
 
 function Tilemap({onSelectColor, onSelectLoc}) {
     const canvasRef = useRef(null)
-    const colors = useMemo(['red', 'blue', 'green', 'yellow'],[])
+    const colors = useMemo(() => ['red', 'blue', 'green', 'yellow'],[])
     const SIZE_OF_TILE = 32
 
     useEffect(() => {
