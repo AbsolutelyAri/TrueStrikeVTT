@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useRef, useState, useCallback} from 'react'
 
 function Canvas() {
     let SIZE_OF_TILE = 32
@@ -39,7 +39,7 @@ function Canvas() {
 
     }
 
-    const drawBackgroundImg = (ctx) => {
+    const drawBackgroundImg = useCallback(() => {
         if(uploadedImg && canvasRef.current) {
             const img = new Image()
             img.src = uploadedImg
@@ -58,9 +58,10 @@ function Canvas() {
                 console.error("error on img load");
             };
         }
-    }
+    },[uploadedImg]);
 
-    const redrawCanvas = (tokenX, tokenY) => {
+    const redrawCanvas = useCallback => {
+        //Temp removed tokenX and tokenY
         if(canvasRef.current) {
             const ctx = canvasRef.current.getContext('2d')
             ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
@@ -68,14 +69,14 @@ function Canvas() {
             drawGrid(canvasRef.current.width, canvasRef.current.height, ctx)
             console.log(collisionMatrix)
         }
-    }
+    };
 
     useEffect(() => {
         if(canvasRef.current) {
             const ctx = canvasRef.current.getContext('2d')
             drawGrid(768, 768, ctx)
         }
-    }, [])
+    }, [drawBackgroundImg])
 
     useEffect(() => {
         const handleKeyDown = (e) => {
