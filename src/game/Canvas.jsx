@@ -97,7 +97,7 @@ function Canvas() {
         }
         window.addEventListener('keydown', handleKeyDown)
         return () => window.removeEventListener('keydown', handleKeyDown)
-    }, [tokenPos])
+    }, [tokenPos, SIZE_OF_TILE, collisionMatrix, redrawCanvas])
 
     useEffect(() => {
         if(canvasRef.current && tokenImgUrl){
@@ -119,7 +119,7 @@ function Canvas() {
                 console.log('tokenPos X: %d, tokenPos Y: %d', tokenPos.x, tokenPos.y)
             }
         }
-    }, [uploadedImg, tokenImgUrl, tokenPos])
+    }, [uploadedImg, tokenImgUrl, tokenPos, SIZE_OF_TILE, drawBackgroundImg])
 
     const handleFileChange = (e) => {
         const reader = new FileReader()
