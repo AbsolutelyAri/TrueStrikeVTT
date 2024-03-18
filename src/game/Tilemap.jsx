@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useMemo } from "react";
 
 function Tilemap({onSelectColor, onSelectLoc}) {
     const canvasRef = useRef(null)
