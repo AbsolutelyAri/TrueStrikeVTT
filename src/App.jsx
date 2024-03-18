@@ -1,19 +1,19 @@
-import {useState} from 'react';
 import Canvas from './game/Canvas';
 import './index.css'
-import Tilemap from './game/Tilemap'
+import PluginPanel from './game/PluginPanel';
 
 
 function App() {
-  const [currentColor, setCurrentColor] = useState('red')
 
   return (
     <div className='rootElem'>
       <div className='left-column'>
-        <Tilemap onSelectColor={setCurrentColor}/>
+        <div className='plugin-panel'>
+          <PluginPanel />
+        </div>
       </div>
       <div className='right-column'>
-        <Canvas currentColor={currentColor}/>
+        <Canvas/>
       </div>
     </div>
   );

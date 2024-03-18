@@ -30,12 +30,17 @@ code {
 .rootElem {
   min-height: 100vh;
   display: flex;
-  color: #fbd5ff;
-  background: rgb(2,0,36);
+  color: #e40000;
+  background: rgb(23, 22, 38);
 }
 
 .left-column {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
   flex: 1;
+  height: 100vh; /* Ensure it takes full viewport height, adjust as needed */
+  padding-left: 10px;
 }
 
 .right-column {
@@ -43,6 +48,7 @@ code {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-left: 100px;
 }
 
 .canvas {
@@ -51,3 +57,17 @@ code {
   max-height: 80vh;
   border-radius: 3px;
 }
+
+.plugin-panel {
+
+  max-height: 80vh;
+  border: 1px solid red; 
+  border-radius: 8px; 
+  background-color: #110412;
+  max-width: 90vh; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  padding: 20px; 
+  overflow: auto; 
+}
+
+
