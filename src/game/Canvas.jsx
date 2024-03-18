@@ -60,7 +60,7 @@ function Canvas() {
         }
     },[uploadedImg]);
 
-    const redrawCanvas = useCallback => {
+    const redrawCanvas = useCallback(() => {
         //Temp removed tokenX and tokenY
         if(canvasRef.current) {
             const ctx = canvasRef.current.getContext('2d')
@@ -69,14 +69,14 @@ function Canvas() {
             drawGrid(canvasRef.current.width, canvasRef.current.height, ctx)
             console.log(collisionMatrix)
         }
-    };
+    }, [/* dependencies */]);
 
     useEffect(() => {
         if(canvasRef.current) {
             const ctx = canvasRef.current.getContext('2d')
             drawGrid(768, 768, ctx)
         }
-    }, [drawBackgroundImg])
+    })
 
     useEffect(() => {
         const handleKeyDown = (e) => {
