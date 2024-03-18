@@ -69,7 +69,7 @@ function Canvas() {
             drawGrid(canvasRef.current.width, canvasRef.current.height, ctx)
             console.log(collisionMatrix)
         }
-    }, [/* dependencies */]);
+    }, [collisionMatrix, drawBackgroundImg]);
 
     useEffect(() => {
         if(canvasRef.current) {
