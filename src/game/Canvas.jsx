@@ -2,6 +2,8 @@ import {useEffect, useRef, useState, useCallback} from 'react'
 
 function Canvas() {
     let SIZE_OF_TILE = 32
+    let numTiles = 16
+    // const [numTiles, setNumTiles] = useState({x: 16, y: 16})
     // let TILESET_IMAGES = []
     // let IMAGES = [{src:''}]
     // let WIDTH = 0
@@ -74,7 +76,7 @@ function Canvas() {
     useEffect(() => {
         if(canvasRef.current) {
             const ctx = canvasRef.current.getContext('2d')
-            drawGrid(768, 768, ctx)
+            drawGrid(numTiles * SIZE_OF_TILE, numTiles * SIZE_OF_TILE, ctx)
         }
     })
 
@@ -179,7 +181,8 @@ function Canvas() {
             <input type="file" onChange={handleFileChange} accept='image/*' id="backgroundChange"></input>
             <label for="tokenChange">Input token img file</label>
             <input type="file" onChange={handleTokenChange} accept='image/*' id="tokenChange"></input>
-            <canvas ref={canvasRef} width={768} height={768} onClick={onClickRect}/>
+            <canvas ref={canvasRef} width={numTiles * SIZE_OF_TILE} height={numTiles * SIZE_OF_TILE} onClick={onClickRect}/>
+ 
         </div>
         
     )
