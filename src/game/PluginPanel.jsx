@@ -1,13 +1,16 @@
-import React from "react";
-import styles from './pluginPanel.module.css'
+import React from 'react';
+import styles from './pluginPanel.module.css';
 
-function PluginPanel() {
+const PluginPanel = ({PluginName = "NULL"}) => {
     return (
-        <div>
-            <header className={styles.pluginPanelHeader}>Plugins</header>
-            <p>Hello, this is just a test to see if the resizing effect of the css styles is working</p>
+        <div className={styles.container}>
+            <h4>{PluginName}</h4>
+            <label className={styles.switch}>
+                <input type="checkbox"/>
+                <span className={styles.slider}/>
+            </label>
         </div>
-    )
-}
+    );
+};
 
-export default PluginPanel
+export default PluginPanel;

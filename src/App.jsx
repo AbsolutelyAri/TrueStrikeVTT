@@ -9,7 +9,10 @@ function App() {
     <div className='rootElem'>
       <div className='left-column'>
         <div className='plugin-panel'>
-          <PluginPanel />
+          <PluginPanel PluginName = "TESTING" />
+        </div>
+        <div className='plugin-panel'>
+          <PluginPanel PluginName = "TESTING" />
         </div>
       </div>
       <div className='right-column'>
