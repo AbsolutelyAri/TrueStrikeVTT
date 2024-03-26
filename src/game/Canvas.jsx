@@ -15,7 +15,7 @@ function Canvas() {
     const [tokenImgUrl, setTokenImgUrl] = useState(null)
     const [tokenPos, setTokenPos] = useState({x: 0, y: 0})
     const storage = getStorage();
-    const backgroundRef = ref(storage, 'images/background.png');
+    const backgroundRef = storage.child("images/background.png");
 
     const [collisionMatrix, setCollisionMatrix] =  useState(Array.from({length: 24}, () => Array.from({length: 24}, () => 0)))
 
@@ -185,7 +185,15 @@ function Canvas() {
     }
 
     const uploadBackground = (e) => {
-        uploadBytes(backgroundRef, e);
+        // Create metadata to specify the file type
+        var metadata = {
+            contentType: 'image/png',
+        };
+
+        // Upload the image to the background reference
+        backgroundRef.put(e, metadata).then((snapshot) => {
+            console.log("uploaded a new background");
+        });
     }
     
     return (
