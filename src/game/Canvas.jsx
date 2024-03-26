@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState, useCallback} from 'react'
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getStorage } from "firebase/storage";
 
 
 function Canvas() {
