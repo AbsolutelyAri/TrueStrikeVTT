@@ -1,4 +1,6 @@
 import {useEffect, useRef, useState, useCallback} from 'react'
+import { getStorage, ref, uploadBytes } from "firebase/storage";
+
 
 function Canvas() {
     let SIZE_OF_TILE = 32
@@ -12,6 +14,7 @@ function Canvas() {
     const [uploadedImg, setUploadedImg] = useState(null)
     const [tokenImgUrl, setTokenImgUrl] = useState(null)
     const [tokenPos, setTokenPos] = useState({x: 0, y: 0})
+    const storage = getStorage();
 
     const [collisionMatrix, setCollisionMatrix] =  useState(Array.from({length: 24}, () => Array.from({length: 24}, () => 0)))
 
@@ -132,7 +135,13 @@ function Canvas() {
             console.log("called filechange")
             if(canvasRef.current) {
                 const img = new Image()
-                img.src = reader.result
+
+                // Add result to the Firebase storage
+                const backgroundRef = ref(storage, 'images/background.png');
+                uploadBytes(backgroundRef, reader.result);
+
+                img.src = backgroundRef.fullPath // TODO: Replace with the firebase storage location
+
                 setUploadedImg(reader.result)
                 img.onload = () => {
                     const ctx = canvasRef.current.getContext('2d')
