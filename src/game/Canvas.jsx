@@ -15,6 +15,7 @@ function Canvas() {
     const [tokenImgUrl, setTokenImgUrl] = useState(null)
     const [tokenPos, setTokenPos] = useState({x: 0, y: 0})
     const storage = getStorage();
+    const backgroundRef = ref(storage, 'images/background.png');
 
     const [collisionMatrix, setCollisionMatrix] =  useState(Array.from({length: 24}, () => Array.from({length: 24}, () => 0)))
 
@@ -47,7 +48,7 @@ function Canvas() {
     const drawBackgroundImg = useCallback(() => {
         if(uploadedImg && canvasRef.current) {
             const img = new Image()
-            img.src = uploadedImg
+            img.src = backgroundRef.fullPath
             img.onload = () => {
                 const ctx = canvasRef.current.getContext('2d');
                 ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
@@ -63,7 +64,7 @@ function Canvas() {
                 console.error("error on img load");
             };
         }
-    },[uploadedImg]);
+    },[uploadedImg, backgroundRef]);
 
     const redrawCanvas = useCallback(() => {
         //Temp removed tokenX and tokenY
@@ -137,10 +138,9 @@ function Canvas() {
                 const img = new Image()
 
                 // Add result to the Firebase storage
-                const backgroundRef = ref(storage, 'images/background.png');
-                uploadBytes(backgroundRef, reader.result);
+                uploadBackground(reader.result)
 
-                img.src = backgroundRef.fullPath // TODO: Replace with the firebase storage location
+                img.src = backgroundRef.fullPath
 
                 setUploadedImg(reader.result)
                 img.onload = () => {
@@ -182,6 +182,10 @@ function Canvas() {
         const tx = Math.floor((e.clientX - rect.left) / SIZE_OF_TILE);
         const ty = Math.floor((e.clientY - rect.top) / SIZE_OF_TILE);
         updateCollisionMatrix(tx, ty, 1)
+    }
+
+    const uploadBackground = (e) => {
+        uploadBytes(backgroundRef, e);
     }
     
     return (
