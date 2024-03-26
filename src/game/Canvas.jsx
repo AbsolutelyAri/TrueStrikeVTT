@@ -2,9 +2,6 @@ import {useEffect, useRef, useState, useCallback} from 'react'
 import Modal from './Modal'
 import styles from './canvas.module.css'
 
-import firebase from "firebase/app";
-import "firebase/storage";
-
 
 function Canvas({selectedTile}) {
     let SIZE_OF_TILE = 32
