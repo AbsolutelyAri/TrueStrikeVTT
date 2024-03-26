@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState, useCallback} from 'react'
-import { getStorage } from "firebase/storage";
+import firebase from "firebase/app";
+import "firebase/storage";
 
 
 function Canvas() {
@@ -14,7 +15,7 @@ function Canvas() {
     const [uploadedImg, setUploadedImg] = useState(null)
     const [tokenImgUrl, setTokenImgUrl] = useState(null)
     const [tokenPos, setTokenPos] = useState({x: 0, y: 0})
-    const storage = getStorage();
+    const storage = firebase.storage();
     const backgroundRef = storage.child("images/background.png");
 
     const [collisionMatrix, setCollisionMatrix] =  useState(Array.from({length: 24}, () => Array.from({length: 24}, () => 0)))
