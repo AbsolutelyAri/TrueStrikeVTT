@@ -19,7 +19,7 @@ function Canvas() {
         setCollisionMatrix(prevMatrix => {
             const newMatrix = prevMatrix.map(row => [...row])
             newMatrix[y][x] = value
-            return newMatrix
+            return newMatrix //contains the latest wall coordinates
         })
     }
 

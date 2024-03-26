@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Test</title>
+    <style>
+        label {
+            display: inline-block;
+            font-size: 16px;
+            font-family: Arial, Helvetica, sans-serif;
+            width: 110px;
+        }
+        input,
+        select {
+            width: 180px;
+            height: 30px;
+            font-size: 16px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        button{
+            height: 30px;
+            width: 72px;
+        }
+    </style>
+</head>
+
+<body>
+    <label>First Name</label>
+    <input type="text" id="FnameInput">
+    <br><br>
+
+    <label>Last Name</label>
+    <input type="text" id="LnameInput">
+    <br><br>
+
+    <label>Department</label>
+    <select id="DeptInput">
+        <option value="Development">Development</option>
+        <option value="Testing">Testing</option>
+        <option value="Management">Management</option>
+        <option value="Administration">Administration</option>
+    </select>
+    <br><br>
+
+    <label>Can Swim</label>
+    <select id="swimInput">
+        <option value="yes">yes</option>
+        <option value="no">no</option>
+    </select>
+    <br><br>
+
+    <label>CNIC Number</label>
+    <input type="number" id="CNICInput">
+    <br><br>
+
+    <button id="Addbtn">Add</button>
+    <button id="Retbtn">Retrieve</button>
+    <button id="Updbtn">Update</button>
+    <button id="Delbtn">Delete</button>
+
+    <script type="module">// Note module will not allow you to access the database outside this script
+    // Also, cannot use this as it is "CDN" and we will need "npm" for our project.
+        
+        
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyBajy50H01kDsTgQyPOh_z9z390Zdmiw6E",
+          authDomain: "truestrikevtt-25320.firebaseapp.com",
+          databaseURL: "https://truestrikevtt-25320-default-rtdb.firebaseio.com",
+          projectId: "truestrikevtt-25320",
+          storageBucket: "truestrikevtt-25320.appspot.com",
+          messagingSenderId: "285980706870",
+          appId: "1:285980706870:web:843420b74cc7e950ab3097"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        import {getDatabase, ref, child, get, set, update, remove} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js"; //getting the function (left side of "from") from Firebase database
+
+        const db = getDatabase(); //gets the database
+
+        // below ties the buttons and texts boxes from the web page to the script
+        let FnameInput = document.getElementById('FnameInput');
+        let LnameInput = document.getElementById('LnameInput');
+        let DeptInput = document.getElementById('DeptInput');
+        let swimInput = document.getElementById('swimInput');
+        let CNICInput = document.getElementById('CNICInput');
+
+        let Addbtn = document.getElementById('Addbtn');
+        let Retbtn = document.getElementById('Retbtn');
+        let Updbtn = document.getElementById('Updbtn');
+        let Delbtn = document.getElementById('Delbtn');
+
+        function AddData(){ //method to add data
+            set(ref(db /* database to refrence*/, 'EmployeeSet/' + CNICInput.value /* Folder path (Each value CNIC Value will be different so it is their personal folder)*/), {
+                nameofemployee: {firstname: FnameInput.value, lastname: LnameInput.value}, //creating the nameofemployee object that has the propeties of first name and last name (THIS IS AN OBJECT)
+                department: DeptInput.value, //department object that has the property of the department object that gets selected (THIS IS A STRING)
+                canswim: (swimInput.value == "yes"), //Will save true inside of can swim if it is selected "yes" to can swim (THIS IS A BOOLEAN)
+                cnic: Number(CNICInput.value) //COnverts the input to a number (THIS IS A NUMBER)
+                // the 4 datatypes that can be stored in the DB ^
+            })
+            .then(()=>{//upon successful data entry do the following
+                alert("Data added successfully");
+            })
+            .catch((error)=>{
+                alert("Unsuccessful");
+                console.log(error);
+            })
+        }
+
+        function RetData(){ //method to retrieve data
+            const dbRef = ref(db);// database which we are refrencing
+
+            get(child(dbRef, 'EmployeeSet/' + CNICInput.value)).then((snapshot)=>{ //we are getting the data that is under the employee's CNIC number, then getting a snapshot if it exists
+                if(snapshot.exists()){ //if the data exists get the data
+                    FnameInput.value = snapshot.val().nameofemployee.firstname;
+                    LnameInput.value = snapshot.val().nameofemployee.lastname;
+                    DeptInput.value = snapshot.val().department;
+                    swimInput.value = (snapshot.val().canswim)? "yes" : "no"; //if the canswim snapshot returns true return yes, if false then return no
+                }
+                else{
+                    alert("Employee does not exist");
+                }
+            })
+            .catch((error)=>{
+                alert("Unsuccessful");
+                console.log(error);
+            })
+        }
+
+        function UpdateData(){ //method to update data
+            update(ref(db /* database to refrence*/, 'EmployeeSet/' + CNICInput.value), {
+                nameofemployee: {firstname: FnameInput.value, lastname: LnameInput.value},
+                department: DeptInput.value,
+                canswim: (swimInput.value == "yes"),
+            })
+            .then(()=>{//upon successful data entry do the following
+                alert("Data updated successfully");
+            })
+            .catch((error)=>{
+                alert("Unsuccessful");
+                console.log(error);
+            })
+        }
+
+        function DeleteData(){ //method to update data
+            remove(ref(db /* database to refrence*/, 'EmployeeSet/' + CNICInput.value))
+            .then(()=>{//upon successful data deletion do the following
+                alert("Data deleted successfully");
+            })
+            .catch((error)=>{
+                alert("Unsuccessful");
+                console.log(error);
+            })
+        }
+
+        Addbtn.addEventListener('click', AddData)
+        Retbtn.addEventListener('click', RetData)
+        Updbtn.addEventListener('click', UpdateData)
+        Delbtn.addEventListener('click', DeleteData)
+      </script>
+
+</body>
+</html>
