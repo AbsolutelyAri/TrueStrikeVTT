@@ -1,7 +1,8 @@
 import Canvas from './game/Canvas';
+import {useState} from 'react'
 import './index.css'
 import PluginPanel from './game/PluginPanel';
-
+import Tilemap from './game/Tilemap';
 // FROM FIREBASE WEBSITE
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -20,7 +21,10 @@ const firebaseConfig = {
 };
 
 function App() {
-  initializeApp(firebaseConfig);
+  initializeApp(firebaseConfig);  
+  const [selectedTile, setSelectedTile] = useState({x: 0, y: 0})
+  
+  
   return (
     <div className='rootElem'>
       <div className='left-column'>
@@ -32,7 +36,12 @@ function App() {
         </div>
       </div>
       <div className='right-column'>
-        <Canvas/>
+        <div>
+          <Canvas selectedTile={selectedTile}/>
+        </div>
+        <div>
+          <Tilemap setSelectedTile={setSelectedTile}/>
+        </div>
       </div>
     </div>
   );

@@ -46,13 +46,27 @@ code {
 .right-column {
   flex: 3;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
-  padding-left: 100px;
+  padding: 0 100px;
+
+}
+
+.canvas-container, .tilemap-container {
+  /* You can adjust max-width and margin as needed to create a gap and ensure proper sizing */
+  max-width: calc(50% - 10px); /* Subtract twice the desired gap size to account for both sides */
+  margin: 0 5px; /* This will create a 10px gap total between them */
 }
 
 .canvas {
   max-width: 90%;
+  border: 1px solid aqua;
+  max-height: 80vh;
+  border-radius: 3px;
+}
+
+.tilemap {
+  width: 100%;
   border: 1px solid aqua;
   max-height: 80vh;
   border-radius: 3px;
