@@ -1,6 +1,8 @@
 import {useEffect, useRef, useState, useCallback} from 'react'
 import Modal from './Modal'
 import styles from './canvas.module.css'
+import { database } from 'firebase';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
 
 
 function Canvas({selectedTile}) {
@@ -14,6 +16,19 @@ function Canvas({selectedTile}) {
     const [canvasDims, setCanvasDims] = useState({width: 64, height: 64})
     const [isModalOpen, setModalOpen] = useState(false)
     const [collisionMatrix, setCollisionMatrix] =  useState(Array.from({length: 24}, () => Array.from({length: 24}, () => 0)))
+    
+    const firebaseConfig = { //config file to allow this page to talk to the server
+        apiKey: "AIzaSyBajy50H01kDsTgQyPOh_z9z390Zdmiw6E",
+        authDomain: "truestrikevtt-25320.firebaseapp.com",
+        databaseURL: "https://truestrikevtt-25320-default-rtdb.firebaseio.com",
+        projectId: "truestrikevtt-25320",
+        storageBucket: "truestrikevtt-25320.appspot.com",
+        messagingSenderId: "285980706870",
+        appId: "1:285980706870:web:843420b74cc7e950ab3097"
+      };
+
+      const app = initializeApp(firebaseConfig); //should initilize the page with the DB
+      
 
     useEffect(() => {
         setModalOpen(true)
@@ -233,6 +248,18 @@ function Canvas({selectedTile}) {
                     <label htmlFor="tokenChange" className={styles.customFileUpload}>Upload Token</label>
                     <input type="file" onChange={handleTokenChange} accept='image/*' id="tokenChange" className={styles.hidden}></input>
                 </div>
+                <div>
+                    <button onClick={SaveFirebase.AddData}>Add</button>
+                </div>
+                <div>
+                    <button onClick={SaveFirebase.RetData}>Retrieve</button>
+                </div>
+                <div>
+                    <button onClick={SaveFirebase.UpdateData}>Update</button>
+                </div>
+                <div>
+                    <button onClick={SaveFirebase.DeleteData}>Delete</button>
+                </div>
             </div>
             <div>
             </div>
@@ -241,6 +268,87 @@ function Canvas({selectedTile}) {
         </div>
         
     )
+} //getting the function (left side of "from") from Firebase database
+// Your web app's Firebase configuration
+
+
+
+function SaveFirebase() {
+
+    const db = database(); // Assuming you have initialized Firebase database
+
+      const [XCoordinate, setXCoordinate] = useState('');
+      const [YCoordinate, setYCoordinate] = useState('');
+      const [TokenImage, setTokenImage] = useState('');
+      const [Grid, setGrid] = useState('');
+      const [GameName, setGameName] = useState('');
+      const [BackgroundImage, setBackgroundImage] = useState('');
+      const [CanvasDims, setCanvasDims] = useState({ width: 0, height: 0 });
+
+ 
+
+    const AddData = () => {
+        db.ref('Campaigns/' + GameName).set({
+            token: { xcoord: XCoordinate, ycoord: YCoordinate, image: TokenImage },
+            grid: Grid,
+            backgroundImage: BackgroundImage,
+          })
+            .then(() => {
+              alert("Data added successfully");
+            })
+            .catch((error) => {
+              alert("Unsuccessful");
+              console.log(error);
+            });
+    }
+
+    const RetData = () => {
+        const dbRef = db.ref('Campaigns/' + GameName);
+    dbRef.once('value')
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          setXCoordinate(data.token.xcoord);
+          setYCoordinate(data.token.ycoord);
+          setTokenImage(data.token.image);
+          setGrid(data.grid);
+          setBackgroundImage(data.backgroundImage);
+        } else {
+          alert("Campaign does not exist");
+        }
+      })
+      .catch((error) => {
+        alert("Unsuccessful");
+        console.log(error);
+      });
+    }
+
+    const UpdateData = () => {
+        db.ref('Campaigns/' + GameName).update({
+            token: { xcoord: XCoordinate, ycoord: YCoordinate, image: TokenImage },
+            grid: Grid,
+            backgroundImage: BackgroundImage,
+          })
+            .then(() => {
+              alert("Data updated successfully");
+            })
+            .catch((error) => {
+              alert("Unsuccessful");
+              console.log(error);
+            });
+    }
+
+    const DeleteData = () => {
+        // Delete data from Firebase
+        db.ref('Campaigns/' + GameName).remove()
+      .then(() => {
+        alert("Data deleted successfully");
+      })
+      .catch((error) => {
+        alert("Unsuccessful");
+        console.log(error);
+      });
+    }
 }
 
-export default Canvas
+export default Canvas;
