@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import Modal from './Modal'
 import styles from './canvas.module.css'
 import {db} from './firebase'
-import { ref, set, update } from "firebase/database";
+import { get, ref, child, set, update, remove } from "firebase/database";
 
 function Canvas({ selectedTile }) {
     let SIZE_OF_TILE = 32
@@ -253,23 +253,29 @@ function Canvas({ selectedTile }) {
             alert("Please provide a game name");
             return;
         }
-
-        const dbRef = db.ref('Campaigns/' + GameName);
-        dbRef.once('value')
+    
+        // Construct the path to the data location in the database
+        const dataPath = 'Campaigns/' + GameName;
+    
+        // Get the data from the database at the specified location
+        const dataRef = ref(db, dataPath);
+        get(dataRef)
             .then((snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.val();
+                    // Update state with retrieved data
                     setTokenPos({ x: data.token.xcoord, y: data.token.ycoord });
                     setTokenImgUrl(data.token.image);
                     setCollisionMatrix(data.grid);
                     setUploadedImg(data.backgroundImage);
                 } else {
+                    // If the campaign does not exist, show an alert
                     alert("Campaign does not exist");
                 }
             })
             .catch((error) => {
-                alert("Unsuccessful");
-                console.log(error);
+                // Handle errors while retrieving data
+                alert("Error retrieving data: " + error.message);
             });
     }
 
@@ -322,7 +328,9 @@ function Canvas({ selectedTile }) {
                     <label htmlFor="tokenChange" className={styles.customFileUpload}>Upload Token</label>
                     <input type="file" onChange={handleTokenChange} accept='image/*' id="tokenChange" className={styles.hidden}></input>
                 </div>
-                <div>
+            </div>
+            <div className={styles.dbContainers}>
+            <div>
                     <button onClick={AddData}>Add</button>
                 </div>
                 <div>
@@ -346,8 +354,5 @@ function Canvas({ selectedTile }) {
 
     )
 }
-
-
-
 
 export default Canvas;

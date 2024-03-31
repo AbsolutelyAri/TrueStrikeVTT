@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database"; //getting the function (left side of "from") from Firebase database
-//import {ref, child, get, set, update, remove} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js"; //getting the function (left side of "from") from Firebase database
+import { get, ref, child, set, update, remove } from "firebase/database";
 
 const firebaseConfig = { //config file to allow this page to talk to the server
     apiKey: "AIzaSyBajy50H01kDsTgQyPOh_z9z390Zdmiw6E",
