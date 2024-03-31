@@ -1,50 +1,52 @@
-import {useEffect, useRef, useState, useCallback} from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import Modal from './Modal'
 import styles from './canvas.module.css'
 import { database } from 'firebase';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+import {getDatabase} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js"; //getting the function (left side of "from") from Firebase database
+
+const firebaseConfig = { //config file to allow this page to talk to the server
+    apiKey: "AIzaSyBajy50H01kDsTgQyPOh_z9z390Zdmiw6E",
+    authDomain: "truestrikevtt-25320.firebaseapp.com",
+    databaseURL: "https://truestrikevtt-25320-default-rtdb.firebaseio.com",
+    projectId: "truestrikevtt-25320",
+    storageBucket: "truestrikevtt-25320.appspot.com",
+    messagingSenderId: "285980706870",
+    appId: "1:285980706870:web:843420b74cc7e950ab3097"
+};
+
+const app = initializeApp(firebaseConfig); //should initilize the page with the DB
+const db = getDatabase();
 
 
-function Canvas({selectedTile}) {
+function Canvas({ selectedTile }) {
     let SIZE_OF_TILE = 32
     let TILESET_IMAGE = `${process.env.PUBLIC_URL}/AITileset.jpg`
     const [drawnTiles, setDrawnTiles] = useState([])
     const canvasRef = useRef(null)
     const [uploadedImg, setUploadedImg] = useState(null)
     const [tokenImgUrl, setTokenImgUrl] = useState(null)
-    const [tokenPos, setTokenPos] = useState({x: 0, y: 0, oldX: 0, oldY: 0})
-    const [canvasDims, setCanvasDims] = useState({width: 64, height: 64})
+    const [tokenPos, setTokenPos] = useState({ x: 0, y: 0, oldX: 0, oldY: 0 })
+    const [canvasDims, setCanvasDims] = useState({ width: 64, height: 64 })
     const [isModalOpen, setModalOpen] = useState(false)
-    const [collisionMatrix, setCollisionMatrix] =  useState(Array.from({length: 24}, () => Array.from({length: 24}, () => 0)))
-    
-    const firebaseConfig = { //config file to allow this page to talk to the server
-        apiKey: "AIzaSyBajy50H01kDsTgQyPOh_z9z390Zdmiw6E",
-        authDomain: "truestrikevtt-25320.firebaseapp.com",
-        databaseURL: "https://truestrikevtt-25320-default-rtdb.firebaseio.com",
-        projectId: "truestrikevtt-25320",
-        storageBucket: "truestrikevtt-25320.appspot.com",
-        messagingSenderId: "285980706870",
-        appId: "1:285980706870:web:843420b74cc7e950ab3097"
-      };
-
-      const app = initializeApp(firebaseConfig); //should initilize the page with the DB
-      
+    const [collisionMatrix, setCollisionMatrix] = useState(Array.from({ length: 24 }, () => Array.from({ length: 24 }, () => 0)))
+    const [GameName, setGameName] = useState('');
 
     useEffect(() => {
         setModalOpen(true)
     }, [])
 
-    const drawGrid = useCallback((w, h, ctx, step=32, color='rgba(0,255,217,1)') => {
+    const drawGrid = useCallback((w, h, ctx, step = 32, color = 'rgba(0,255,217,1)') => {
         ctx.strokeStyle = color
         ctx.lineWidth = 1
         ctx.beginPath()
-        for(let x = 0; x < w + 1; x += step){
+        for (let x = 0; x < w + 1; x += step) {
             ctx.moveTo(x, 0.5)
             ctx.lineTo(x, h + 0.5)
         }
         ctx.stroke();
         ctx.beginPath()
-        for(let y = 0; y < h + 1; y += step){
+        for (let y = 0; y < h + 1; y += step) {
             ctx.moveTo(0, y + 0.5)
             ctx.lineTo(w, y + 0.5)
         }
@@ -71,7 +73,7 @@ function Canvas({selectedTile}) {
                 console.error("error on img load");
             };
         }
-    }, [uploadedImg, canvasDims, drawGrid]); 
+    }, [uploadedImg, canvasDims, drawGrid]);
 
     /* Tile coordinates are updated here, (sx, sy) is the source coordinate
        from the tilemap. (dx, dy) is the destination coordinate
@@ -83,7 +85,7 @@ function Canvas({selectedTile}) {
         const tileImg = new Image()
         tileImg.src = TILESET_IMAGE
         tileImg.onload = () => {
-            drawnTiles.forEach(({sx, sy, dx, dy }) => {
+            drawnTiles.forEach(({ sx, sy, dx, dy }) => {
                 console.log(sx, sy, dx, dy)
                 ctx.drawImage(tileImg, sx * SIZE_OF_TILE, sy * SIZE_OF_TILE, SIZE_OF_TILE, SIZE_OF_TILE, dx * SIZE_OF_TILE, dy * SIZE_OF_TILE, SIZE_OF_TILE, SIZE_OF_TILE)
             })
@@ -102,14 +104,14 @@ function Canvas({selectedTile}) {
     }, [SIZE_OF_TILE, tokenImgUrl, tokenPos, canvasDims, drawGrid, TILESET_IMAGE, drawnTiles])
 
     const draw = useCallback(() => {
-        if (canvasRef.current && !uploadedImg && !tokenImgUrl){
+        if (canvasRef.current && !uploadedImg && !tokenImgUrl) {
             const ctx = canvasRef.current.getContext('2d')
             drawGrid(canvasDims.width, canvasDims.height, ctx)
         }
-        if(canvasRef.current && uploadedImg && !tokenImgUrl){
+        if (canvasRef.current && uploadedImg && !tokenImgUrl) {
             drawBackgroundImg()
         }
-        if(canvasRef.current && tokenImgUrl && !uploadedImg){
+        if (canvasRef.current && tokenImgUrl && !uploadedImg) {
             drawToken()
         }
         if (uploadedImg && tokenImgUrl && canvasRef.current) {
@@ -132,7 +134,7 @@ function Canvas({selectedTile}) {
             };
         }
     }, [uploadedImg, canvasDims, drawGrid, tokenImgUrl, drawToken, drawBackgroundImg]);
-    
+
     /* Collision Matrix updates here */
     const updateCollisionMatrix = (x, y) => {
         setCollisionMatrix(prevMatrix => {
@@ -141,7 +143,7 @@ function Canvas({selectedTile}) {
             console.log(newMatrix)
             return newMatrix
         })
-        
+
     }
 
     /* Token position updates here */
@@ -151,7 +153,7 @@ function Canvas({selectedTile}) {
             let newY = tokenPos.y
             let oldX = tokenPos.x
             let oldY = tokenPos.y
-            switch(e.key){
+            switch (e.key) {
                 case "ArrowUp": newY -= SIZE_OF_TILE; break;
                 case "ArrowDown": newY += SIZE_OF_TILE; break;
                 case "ArrowLeft": newX -= SIZE_OF_TILE; break;
@@ -160,8 +162,8 @@ function Canvas({selectedTile}) {
             }
             newX = Math.max(0, Math.min(newX, canvasRef.current.width - SIZE_OF_TILE))
             newY = Math.max(0, Math.min(newY, canvasRef.current.height - SIZE_OF_TILE))
-            if(collisionMatrix[newY / SIZE_OF_TILE][newX / SIZE_OF_TILE] === 0) {
-                setTokenPos({x: newX, y: newY, oldX: oldX, oldY: oldY})
+            if (collisionMatrix[newY / SIZE_OF_TILE][newX / SIZE_OF_TILE] === 0) {
+                setTokenPos({ x: newX, y: newY, oldX: oldX, oldY: oldY })
             }
         }
         window.addEventListener('keydown', handleKeyDown)
@@ -198,10 +200,10 @@ function Canvas({selectedTile}) {
     const addTile = (tile) => {
         setDrawnTiles(tiles => [...tiles, tile])
     }
-    
+
     const onClickRect = (e) => {
-        if(!canvasRef.current) return;
-       
+        if (!canvasRef.current) return;
+
         const rect = canvasRef.current.getBoundingClientRect()
         const tx = Math.floor((e.clientX - rect.left) / SIZE_OF_TILE);
         const ty = Math.floor((e.clientY - rect.top) / SIZE_OF_TILE);
@@ -227,14 +229,96 @@ function Canvas({selectedTile}) {
     const closeModal = () => setModalOpen(false)
 
     const saveDims = (width, height) => {
-        if(!canvasRef.current) return;
-        setCanvasDims({width, height})
+        if (!canvasRef.current) return;
+        setCanvasDims({ width, height })
         console.log(width, height)
     }
-    
+
     useEffect(() => {
         draw()
     }, [draw])
+
+    const AddData = () => {
+        if (!GameName) {
+            alert("Please provide a game name");
+            return;
+        }
+
+        db.ref('Campaigns/' + GameName).set({
+            token: { xcoord: tokenPos.x, ycoord: tokenPos.y, image: tokenImgUrl },
+            grid: collisionMatrix,
+            backgroundImage: uploadedImg,
+        })
+            .then(() => {
+                alert("Data added successfully");
+            })
+            .catch((error) => {
+                alert("Unsuccessful");
+                console.log(error);
+            });
+    }
+
+    const RetData = () => {
+        if (!GameName) {
+            alert("Please provide a game name");
+            return;
+        }
+
+        const dbRef = db.ref('Campaigns/' + GameName);
+        dbRef.once('value')
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    setTokenPos({ x: data.token.xcoord, y: data.token.ycoord });
+                    setTokenImgUrl(data.token.image);
+                    setCollisionMatrix(data.grid);
+                    setUploadedImg(data.backgroundImage);
+                } else {
+                    alert("Campaign does not exist");
+                }
+            })
+            .catch((error) => {
+                alert("Unsuccessful");
+                console.log(error);
+            });
+    }
+
+    const UpdateData = () => {
+        if (!GameName) {
+            alert("Please provide a game name");
+            return;
+        }
+
+        db.ref('Campaigns/' + GameName).update({
+            token: { xcoord: tokenPos.x, ycoord: tokenPos.y, image: tokenImgUrl },
+            grid: collisionMatrix,
+            backgroundImage: uploadedImg,
+        })
+            .then(() => {
+                alert("Data updated successfully");
+            })
+            .catch((error) => {
+                alert("Unsuccessful");
+                console.log(error);
+            });
+    }
+
+    const DeleteData = () => {
+        if (!GameName) {
+            alert("Please provide a game name");
+            return;
+        }
+
+        db.ref('Campaigns/' + GameName).remove()
+            .then(() => {
+                alert("Data deleted successfully");
+            })
+            .catch((error) => {
+                alert("Unsuccessful");
+                console.log(error);
+            });
+    }
+
 
     return (
         <div>
@@ -249,106 +333,29 @@ function Canvas({selectedTile}) {
                     <input type="file" onChange={handleTokenChange} accept='image/*' id="tokenChange" className={styles.hidden}></input>
                 </div>
                 <div>
-                    <button onClick={SaveFirebase.AddData}>Add</button>
+                    <button onClick={AddData}>Add</button>
                 </div>
                 <div>
-                    <button onClick={SaveFirebase.RetData}>Retrieve</button>
+                    <button onClick={RetData}>Retrieve</button>
                 </div>
                 <div>
-                    <button onClick={SaveFirebase.UpdateData}>Update</button>
+                    <button onClick={UpdateData}>Update</button>
                 </div>
                 <div>
-                    <button onClick={SaveFirebase.DeleteData}>Delete</button>
+                    <button onClick={DeleteData}>Delete</button>
+                </div>
+                <div>
+                    <input type="text" id="GameName" value={GameName} onChange={(e) => setGameName(e.target.value)} placeholder="Campaign Name" />
                 </div>
             </div>
             <div>
             </div>
-            <Modal isOpen={isModalOpen} onClose={closeModal} onSave={saveDims}/> 
-            <canvas ref={canvasRef} width={canvasDims?.width} height={canvasDims?.height} onClick={onClickRect}/>
+            <Modal isOpen={isModalOpen} onClose={closeModal} onSave={saveDims} />
+            <canvas ref={canvasRef} width={canvasDims?.width} height={canvasDims?.height} onClick={onClickRect} />
         </div>
-        
+
     )
-} //getting the function (left side of "from") from Firebase database
-// Your web app's Firebase configuration
-
-
-
-function SaveFirebase() {
-
-    const db = database(); // Assuming you have initialized Firebase database
-
-      const [XCoordinate, setXCoordinate] = useState('');
-      const [YCoordinate, setYCoordinate] = useState('');
-      const [TokenImage, setTokenImage] = useState('');
-      const [Grid, setGrid] = useState('');
-      const [GameName, setGameName] = useState('');
-      const [BackgroundImage, setBackgroundImage] = useState('');
-      const [CanvasDims, setCanvasDims] = useState({ width: 0, height: 0 });
-
- 
-
-    const AddData = () => {
-        db.ref('Campaigns/' + GameName).set({
-            token: { xcoord: XCoordinate, ycoord: YCoordinate, image: TokenImage },
-            grid: Grid,
-            backgroundImage: BackgroundImage,
-          })
-            .then(() => {
-              alert("Data added successfully");
-            })
-            .catch((error) => {
-              alert("Unsuccessful");
-              console.log(error);
-            });
-    }
-
-    const RetData = () => {
-        const dbRef = db.ref('Campaigns/' + GameName);
-    dbRef.once('value')
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          setXCoordinate(data.token.xcoord);
-          setYCoordinate(data.token.ycoord);
-          setTokenImage(data.token.image);
-          setGrid(data.grid);
-          setBackgroundImage(data.backgroundImage);
-        } else {
-          alert("Campaign does not exist");
-        }
-      })
-      .catch((error) => {
-        alert("Unsuccessful");
-        console.log(error);
-      });
-    }
-
-    const UpdateData = () => {
-        db.ref('Campaigns/' + GameName).update({
-            token: { xcoord: XCoordinate, ycoord: YCoordinate, image: TokenImage },
-            grid: Grid,
-            backgroundImage: BackgroundImage,
-          })
-            .then(() => {
-              alert("Data updated successfully");
-            })
-            .catch((error) => {
-              alert("Unsuccessful");
-              console.log(error);
-            });
-    }
-
-    const DeleteData = () => {
-        // Delete data from Firebase
-        db.ref('Campaigns/' + GameName).remove()
-      .then(() => {
-        alert("Data deleted successfully");
-      })
-      .catch((error) => {
-        alert("Unsuccessful");
-        console.log(error);
-      });
-    }
 }
 
-export default Canvas;
+
+export default {Canvas, db};
