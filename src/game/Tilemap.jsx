@@ -1,6 +1,6 @@
 import React, { useRef, useEffect} from "react";
 import styles from './tilemap.module.css'
-import { usePlugins } from "./PluginProvider";
+import { usePlugins } from "../Plugins/PluginProvider";
 
 function Tilemap({setSelectedTile}) {
     const {plugins} = usePlugins()

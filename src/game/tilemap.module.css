@@ -1,5 +1,6 @@
 .tilemapContainer {
     position: absolute;
     top: 180px;
-    right: 20px;
+    right: 20px;  
+    padding-top: 50px;
 }
