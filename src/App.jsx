@@ -21,7 +21,6 @@ import { PluginProvider } from './game/PluginProvider';
 // };
 
 function App() {
-  //initializeApp(firebaseConfig);  
   const [selectedTile, setSelectedTile] = useState({x: 0, y: 0})
 
   const [plugins, setPlugins] = useState([
