@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import Modal from './Modal'
 import styles from './canvas.module.css'
-import { database } from 'firebase';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-import {getDatabase} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js"; //getting the function (left side of "from") from Firebase database
+import {getDatabase} from "firebase/database"; //getting the function (left side of "from") from Firebase database
 
 const firebaseConfig = { //config file to allow this page to talk to the server
     apiKey: "AIzaSyBajy50H01kDsTgQyPOh_z9z390Zdmiw6E",
@@ -16,7 +15,7 @@ const firebaseConfig = { //config file to allow this page to talk to the server
 };
 
 const app = initializeApp(firebaseConfig); //should initilize the page with the DB
-const db = getDatabase();
+const db = getDatabase(app);
 
 
 function Canvas({ selectedTile }) {
@@ -358,4 +357,4 @@ function Canvas({ selectedTile }) {
 }
 
 
-export default {Canvas, db,app};
+export default Canvas;
