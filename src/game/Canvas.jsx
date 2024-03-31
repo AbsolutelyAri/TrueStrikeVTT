@@ -2,8 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import Modal from './Modal'
 import styles from './canvas.module.css'
 import {db} from './firebase'
-import {getDatabase, ref, child, get, set, update, remove} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js"; //getting the function (left side of "from") from Firebase database
-
+import { ref, set, update } from "firebase/database";
 
 function Canvas({ selectedTile }) {
     let SIZE_OF_TILE = 32
@@ -224,24 +223,29 @@ function Canvas({ selectedTile }) {
         draw()
     }, [draw])
 
+
+
     const AddData = () => {
         if (!GameName) {
             alert("Please provide a game name");
             return;
         }
-
-        db.ref('Campaigns/' + GameName).set({
+    
+        // Construct the path to the data location in the database
+        const dataPath = 'Campaigns/' + GameName;
+    
+        // Add the data to the database at the specified location
+        set(ref(db, dataPath), {
             token: { xcoord: tokenPos.x, ycoord: tokenPos.y, image: tokenImgUrl },
             grid: collisionMatrix,
             backgroundImage: uploadedImg,
         })
-            .then(() => {
-                alert("Data added successfully");
-            })
-            .catch((error) => {
-                alert("Unsuccessful");
-                console.log(error);
-            });
+        .then(() => {
+            alert("Data added successfully");
+        })
+        .catch((error) => {
+            alert("Error adding data: " + error.message);
+        });
     }
 
     const RetData = () => {
