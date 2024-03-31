@@ -358,4 +358,4 @@ function Canvas({ selectedTile }) {
 }
 
 
-export default {Canvas, db};
+export default {Canvas, db,app};
