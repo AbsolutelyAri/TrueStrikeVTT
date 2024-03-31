@@ -18,7 +18,9 @@ function Canvas({selectedTile}) {
 
     useEffect(() => {
         setModalOpen(true);
-        setUploadedImg(RetrieveBackground());
+        RetrieveBackground().then(function(url) {
+            setUploadedImg(url);
+        });
     }, [])
 
     const drawGrid = useCallback((w, h, ctx, step=32, color='rgba(0,255,217,1)') => {
@@ -40,7 +42,7 @@ function Canvas({selectedTile}) {
 
     /* Background image file is updated here. uploadedImg is a data URL representing the image */
     const drawBackgroundImg = useCallback(() => {
-        if (canvasRef.current && uploadedImg) {
+        if (canvasRef.current) {
             const img = new Image();
             img.src = uploadedImg; // Gets the background image from storage
             img.onload = () => {
@@ -125,7 +127,7 @@ function Canvas({selectedTile}) {
         setCollisionMatrix(prevMatrix => {
             const newMatrix = prevMatrix.map(row => [...row])
             newMatrix[y][x] = newMatrix[y][x] ^ 1
-            console.log(newMatrix)
+            //console.log(newMatrix)
             return newMatrix
         })
         
@@ -161,9 +163,12 @@ function Canvas({selectedTile}) {
         const file = e.target.files[0]
         reader.readAsArrayBuffer(file)
         reader.onloadend = () => {
-            console.log("uploaded new background")
             StoreBackground(reader.result); // Stores the result in the Firebase Storage
-            setUploadedImg(RetrieveBackground());
+            RetrieveBackground().then(function(url) {
+                setUploadedImg(url);
+                console.log(url);
+            });
+            console.log("completed handleFileChange");
         }
         reader.onerror = (error) => {
             console.error("error reading file: ", error)

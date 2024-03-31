@@ -37,28 +37,35 @@ export function StoreBackground(file) {
 }
 
 export function RetrieveBackground() {
-    backgroundRef.getDownloadURL().then((url) => {
-        console.log(url);
-        return url;
+
+    return new Promise(function(resolve, reject){ 
+        console.log(backgroundRefPath);
+        var url;
+        backgroundRef.getDownloadURL().then((value) => {
+            url = value;
+        })
+        .catch((error) => { 
+            // A full list of error codes is available at
+            // https://firebase.google.com/docs/storage/web/handle-errors
+            switch (error.code) {
+                case 'storage/object-not-found':
+                    console.error('background storage object not found')
+                    break;
+                case 'storage/unauthorized':
+                    console.error('unauthorized storage access')
+                    break;
+                case 'storage/canceled':
+                    console.error('storage canceled error')
+                    break;
+                default:
+                    console.error('unknown storage error')
+                    break;
+            }
+        });
+
+        setTimeout(function() { resolve(url); }, 500);
     })
-    .catch((error) => { 
-        // A full list of error codes is available at
-        // https://firebase.google.com/docs/storage/web/handle-errors
-        switch (error.code) {
-            case 'storage/object-not-found':
-                console.error('background storage object not found')
-                break;
-            case 'storage/unauthorized':
-                console.error('unauthorized storage access')
-                break;
-            case 'storage/canceled':
-                console.error('storage canceled error')
-                break;
-            default:
-                console.error('unknown storage error')
-                break;
-        }
-    });
+    
 }
 
 // Will need these later when we get around to multiple sessions/screens/etc.
