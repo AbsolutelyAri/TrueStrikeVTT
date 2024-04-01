@@ -264,10 +264,10 @@ function Canvas({ selectedTile }) {
             alert("Please provide a game name");
             return;
         }
-        
+    
         // Construct the path to the data location in the database
         const dataPath = 'Campaigns/' + GameName;
-        
+    
         // Get the data from the database at the specified location
         const dataRef = ref(db, dataPath);
         get(dataRef)
@@ -275,22 +275,31 @@ function Canvas({ selectedTile }) {
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     // Update state with retrieved data
-                    setTokenPos({ x: data.token.xcoord, y: data.token.ycoord });
-                    setTokenImgUrl(data.token.image);
-                    setCollisionMatrix(data.grid);
-                    setUploadedImg(data.backgroundImage);
-                    setCanvasDims(data.canvasDims);
-                    
-                    // Restore drawnTiles state with wall/collision box information
-                    const restoredTiles = data.tiles.map(({ sx, sy, dx, dy, hasWall, image }) => ({
-                        sx,
-                        sy,
-                        dx,
-                        dy,
-                        hasWall,
-                        image,
-                    }));
-                    setDrawnTiles(restoredTiles);
+                    if (data.token) {
+                        setTokenPos({ x: data.token.xcoord, y: data.token.ycoord });
+                        setTokenImgUrl(data.token.image);
+                    }
+                    if (data.grid) {
+                        setCollisionMatrix(data.grid);
+                    }
+                    if (data.backgroundImage) {
+                        setUploadedImg(data.backgroundImage);
+                    }
+                    if (data.canvasDims) {
+                        setCanvasDims(data.canvasDims);
+                    }
+                    if (data.tiles) {
+                        // Restore drawnTiles state with wall/collision box information
+                        const restoredTiles = data.tiles.map(({ sx, sy, dx, dy, hasWall, image }) => ({
+                            sx,
+                            sy,
+                            dx,
+                            dy,
+                            hasWall,
+                            image,
+                        }));
+                        setDrawnTiles(restoredTiles);
+                    }
                 } else {
                     // If the campaign does not exist, show an alert
                     alert("Campaign does not exist");
@@ -300,7 +309,7 @@ function Canvas({ selectedTile }) {
                 // Handle errors while retrieving data
                 alert("Error retrieving data: " + error.message);
             });
-    }
+    };
 
     const UpdateData = () => {
         if (!GameName) {
@@ -347,23 +356,23 @@ function Canvas({ selectedTile }) {
 
     const DeleteData = (GameName) => {
         if (!GameName) {
-          alert("Please provide a valid game name");
-          return;
+            alert("Please provide a valid game name");
+            return;
         }
-      
+    
         // Construct the path to the data location in the database
         const dataPath = 'Campaigns/' + GameName;
-      
+    
         // Remove the data from the database at the specified location
         remove(ref(db, dataPath))
-          .then(() => {
-            alert("Data deleted successfully");
-          })
-          .catch((error) => {
-            alert("Unsuccessful");
-            console.log(error);
-          });
-      };
+            .then(() => {
+                alert("Data deleted successfully");
+            })
+            .catch((error) => {
+                alert("Unsuccessful");
+                console.log(error);
+            });
+    };
 
 
     return (
@@ -390,7 +399,7 @@ function Canvas({ selectedTile }) {
                     <button onClick={UpdateData}>Update</button>
                 </div>
                 <div>
-                    <button onClick={DeleteData}>Delete</button>
+                <button onClick={() => DeleteData(GameName)}>Delete</button>
                 </div>
                 <div>
                     <input type="text" id="GameName" value={GameName.toString()} onChange={(e) => setGameName(e.target.value)} placeholder="Campaign Name" />
