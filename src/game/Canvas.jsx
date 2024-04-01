@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import Modal from './Modal'
 import styles from './canvas.module.css'
-import {db} from './firebase'
-import { get, ref, child, set, update, remove, getDatabase } from "firebase/database";
+
+//import the database from the firebase class
+import { db } from './firebase'
+//import the method calls from the firebase libraries
+import { get, ref, set, update, remove } from "firebase/database";
 
 function Canvas({ selectedTile }) {
     let SIZE_OF_TILE = 32
@@ -225,56 +228,64 @@ function Canvas({ selectedTile }) {
 
 
 
-    const AddData = () => {
+    const AddData = () => { //add data to the database
         if (!GameName) {
-            alert("Please provide a game name");
+            alert("Please provide a game name"); //must have a game name to store data
             return;
         }
-        
-        // Construct the path to the data location in the database
+
+        // Path to the Different games/campaigns
         const dataPath = 'Campaigns/' + GameName;
-        
-        // Add the data to the database at the specified location
+
+        //Get teh wall position and information
         const tileData = drawnTiles.map(({ sx, sy, dx, dy, hasWall = false }) => ({
-            sx,
-            sy,
-            dx,
-            dy,
+            sx, //selected x
+            sy, //selected y
+            dx, //assuming these variables draw the tiles (this is x)
+            dy, //drawn tile y
             hasWall,
-            image: hasWall ? TILESET_IMAGE : null, // Store TILESET_IMAGE if collisions are enabled
+            image: hasWall ? TILESET_IMAGE : null, //should add the tile's image if it has one
         }));
-        
-        set(ref(db, dataPath), {
-            token: { xcoord: tokenPos.x, ycoord: tokenPos.y, image: tokenImgUrl },
-            grid: collisionMatrix,
-            backgroundImage: uploadedImg,
-            canvasDims: canvasDims,
-            tiles: tileData, // Store tile data with wall/collision box information
-        })
-        .then(() => {
-            alert("Data added successfully");
-        })
-        .catch((error) => {
-            alert("Error adding data: " + error.message);
-        });
+
+        // Construct the data object to be saved in the database
+        const dataToSave = {
+            grid: collisionMatrix, //the grid to be saved
+            backgroundImage: uploadedImg, //image of the background
+            canvasDims: canvasDims, //gameboard size
+            tiles: tileData, //individual square data
+        };
+
+        // if we have a token on the board then add it and its information to the database
+        if (tokenImgUrl) {
+            dataToSave.token = { xcoord: tokenPos.x, ycoord: tokenPos.y, image: tokenImgUrl };
+        }
+
+        // Save the data in the database
+        set(ref(db, dataPath), dataToSave)
+            .then(() => {
+                alert("Data added successfully"); //data saved
+            })
+            .catch((error) => {
+                alert("Error adding data: " + error.message); //if something goes wrong
+            });
     }
 
     const RetData = () => {
-        if (!GameName) {
-            alert("Please provide a game name");
+        if (!GameName) { //make sure we have a game name to refrence from db
+            alert("Please provide a game name"); 
             return;
         }
-    
-        // Construct the path to the data location in the database
+
+        // Where we get data from
         const dataPath = 'Campaigns/' + GameName;
-    
+
         // Get the data from the database at the specified location
         const dataRef = ref(db, dataPath);
         get(dataRef)
             .then((snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.val();
-                    // Update state with retrieved data
+                    // Get the data from the database if its field exists
                     if (data.token) {
                         setTokenPos({ x: data.token.xcoord, y: data.token.ycoord });
                         setTokenImgUrl(data.token.image);
@@ -289,7 +300,7 @@ function Canvas({ selectedTile }) {
                         setCanvasDims(data.canvasDims);
                     }
                     if (data.tiles) {
-                        // Restore drawnTiles state with wall/collision box information
+                        // Retrieve drawnTiles state with wall/collision box information
                         const restoredTiles = data.tiles.map(({ sx, sy, dx, dy, hasWall, image }) => ({
                             sx,
                             sy,
@@ -306,64 +317,68 @@ function Canvas({ selectedTile }) {
                 }
             })
             .catch((error) => {
-                // Handle errors while retrieving data
+                // tell us any error that may happen
                 alert("Error retrieving data: " + error.message);
             });
     };
 
     const UpdateData = () => {
-        if (!GameName) {
+        if (!GameName) { //must have game name to update
             alert("Please provide a game name");
             return;
         }
-    
-        // Construct the path to the data location in the database
+
+        // Where our data
         const dataPath = 'Campaigns/' + GameName;
-    
-        // Prepare the tile data with wall/collision box information
+
+        //get the tile data
         const tileData = drawnTiles.map(({ sx, sy, dx, dy, hasWall = false }) => ({
             sx,
             sy,
             dx,
             dy,
             hasWall,
-            image: hasWall ? TILESET_IMAGE : null, // Store TILESET_IMAGE if collisions are enabled
+            image: hasWall ? TILESET_IMAGE : null, //update tile image
         }));
-    
-        // Prepare the data to be updated in the database
+
+        // getting updated data together in one variable
         const updateData = {
-            token: { xcoord: tokenPos.x, ycoord: tokenPos.y, image: tokenImgUrl },
+            token: {
+                xcoord: tokenPos.x,
+                ycoord: tokenPos.y,
+                image: tokenImgUrl || null, // Ensure tokenImgUrl is not undefined before setting
+            },
             grid: collisionMatrix,
             canvasDims: canvasDims,
             tiles: tileData, // Store tile data with wall/collision box information
         };
-    
-        // Include backgroundImage if uploadedImg is defined
-        if (uploadedImg !== undefined && uploadedImg !== null) {
+
+        // add a background image if we have one
+        if (uploadedImg) {
             updateData.backgroundImage = uploadedImg;
         }
-    
+
         // Update the data in the database at the specified location
         update(ref(db, dataPath), updateData)
-        .then(() => {
-            alert("Data updated successfully");
-        })
-        .catch((error) => {
-            alert("Unsuccessful");
-            console.log(error);
-        });
+            .then(() => {
+                alert("Data updated successfully");
+            })
+            .catch((error) => {
+                alert("Unsuccessful");
+                console.log(error);
+            });
     };
 
     const DeleteData = (GameName) => {
-        if (!GameName) {
-            alert("Please provide a valid game name");
+        if (!GameName) { //specify game to delete
+            alert("Enter game to delete");
             return;
         }
-    
-        // Construct the path to the data location in the database
+
+        //Data location
         const dataPath = 'Campaigns/' + GameName;
-    
-        // Remove the data from the database at the specified location
+
+        // Remove chosen Campaign/Game Data
         remove(ref(db, dataPath))
             .then(() => {
                 alert("Data deleted successfully");
@@ -389,7 +404,7 @@ function Canvas({ selectedTile }) {
                 </div>
             </div>
             <div className={styles.dbContainers}>
-            <div>
+                <div>
                     <button onClick={AddData}>Add</button>
                 </div>
                 <div>
@@ -399,7 +414,7 @@ function Canvas({ selectedTile }) {
                     <button onClick={UpdateData}>Update</button>
                 </div>
                 <div>
-                <button onClick={() => DeleteData(GameName)}>Delete</button>
+                    <button onClick={() => DeleteData(GameName)}>Delete</button>
                 </div>
                 <div>
                     <input type="text" id="GameName" value={GameName.toString()} onChange={(e) => setGameName(e.target.value)} placeholder="Campaign Name" />
