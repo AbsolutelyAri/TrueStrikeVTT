@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import Modal from './Modal'
 import styles from './canvas.module.css'
 import {db} from './firebase'
-import { get, ref, child, set, update, remove } from "firebase/database";
+import { get, ref, child, set, update, remove, getDatabase } from "firebase/database";
 
 function Canvas({ selectedTile }) {
     let SIZE_OF_TILE = 32
@@ -230,15 +230,26 @@ function Canvas({ selectedTile }) {
             alert("Please provide a game name");
             return;
         }
-    
+        
         // Construct the path to the data location in the database
         const dataPath = 'Campaigns/' + GameName;
-    
+        
         // Add the data to the database at the specified location
+        const tileData = drawnTiles.map(({ sx, sy, dx, dy, hasWall = false }) => ({
+            sx,
+            sy,
+            dx,
+            dy,
+            hasWall,
+            image: hasWall ? TILESET_IMAGE : null, // Store TILESET_IMAGE if collisions are enabled
+        }));
+        
         set(ref(db, dataPath), {
             token: { xcoord: tokenPos.x, ycoord: tokenPos.y, image: tokenImgUrl },
             grid: collisionMatrix,
             backgroundImage: uploadedImg,
+            canvasDims: canvasDims,
+            tiles: tileData, // Store tile data with wall/collision box information
         })
         .then(() => {
             alert("Data added successfully");
@@ -253,10 +264,10 @@ function Canvas({ selectedTile }) {
             alert("Please provide a game name");
             return;
         }
-    
+        
         // Construct the path to the data location in the database
         const dataPath = 'Campaigns/' + GameName;
-    
+        
         // Get the data from the database at the specified location
         const dataRef = ref(db, dataPath);
         get(dataRef)
@@ -268,6 +279,18 @@ function Canvas({ selectedTile }) {
                     setTokenImgUrl(data.token.image);
                     setCollisionMatrix(data.grid);
                     setUploadedImg(data.backgroundImage);
+                    setCanvasDims(data.canvasDims);
+                    
+                    // Restore drawnTiles state with wall/collision box information
+                    const restoredTiles = data.tiles.map(({ sx, sy, dx, dy, hasWall, image }) => ({
+                        sx,
+                        sy,
+                        dx,
+                        dy,
+                        hasWall,
+                        image,
+                    }));
+                    setDrawnTiles(restoredTiles);
                 } else {
                     // If the campaign does not exist, show an alert
                     alert("Campaign does not exist");
@@ -284,36 +307,63 @@ function Canvas({ selectedTile }) {
             alert("Please provide a game name");
             return;
         }
-
-        db.ref('Campaigns/' + GameName).update({
+    
+        // Construct the path to the data location in the database
+        const dataPath = 'Campaigns/' + GameName;
+    
+        // Prepare the tile data with wall/collision box information
+        const tileData = drawnTiles.map(({ sx, sy, dx, dy, hasWall = false }) => ({
+            sx,
+            sy,
+            dx,
+            dy,
+            hasWall,
+            image: hasWall ? TILESET_IMAGE : null, // Store TILESET_IMAGE if collisions are enabled
+        }));
+    
+        // Prepare the data to be updated in the database
+        const updateData = {
             token: { xcoord: tokenPos.x, ycoord: tokenPos.y, image: tokenImgUrl },
             grid: collisionMatrix,
-            backgroundImage: uploadedImg,
-        })
-            .then(() => {
-                alert("Data updated successfully");
-            })
-            .catch((error) => {
-                alert("Unsuccessful");
-                console.log(error);
-            });
-    }
-
-    const DeleteData = () => {
-        if (!GameName) {
-            alert("Please provide a game name");
-            return;
+            canvasDims: canvasDims,
+            tiles: tileData, // Store tile data with wall/collision box information
+        };
+    
+        // Include backgroundImage if uploadedImg is defined
+        if (uploadedImg !== undefined && uploadedImg !== null) {
+            updateData.backgroundImage = uploadedImg;
         }
+    
+        // Update the data in the database at the specified location
+        update(ref(db, dataPath), updateData)
+        .then(() => {
+            alert("Data updated successfully");
+        })
+        .catch((error) => {
+            alert("Unsuccessful");
+            console.log(error);
+        });
+    };
 
-        db.ref('Campaigns/' + GameName).remove()
-            .then(() => {
-                alert("Data deleted successfully");
-            })
-            .catch((error) => {
-                alert("Unsuccessful");
-                console.log(error);
-            });
-    }
+    const DeleteData = (GameName) => {
+        if (!GameName) {
+          alert("Please provide a valid game name");
+          return;
+        }
+      
+        // Construct the path to the data location in the database
+        const dataPath = 'Campaigns/' + GameName;
+      
+        // Remove the data from the database at the specified location
+        remove(ref(db, dataPath))
+          .then(() => {
+            alert("Data deleted successfully");
+          })
+          .catch((error) => {
+            alert("Unsuccessful");
+            console.log(error);
+          });
+      };
 
 
     return (
@@ -343,7 +393,7 @@ function Canvas({ selectedTile }) {
                     <button onClick={DeleteData}>Delete</button>
                 </div>
                 <div>
-                    <input type="text" id="GameName" value={GameName} onChange={(e) => setGameName(e.target.value)} placeholder="Campaign Name" />
+                    <input type="text" id="GameName" value={GameName.toString()} onChange={(e) => setGameName(e.target.value)} placeholder="Campaign Name" />
                 </div>
             </div>
             <div>
