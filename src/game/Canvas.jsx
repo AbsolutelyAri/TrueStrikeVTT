@@ -259,20 +259,31 @@ function Canvas({ selectedTile }) {
         if (tokenImgUrl) {
             dataToSave.token = { xcoord: tokenPos.x, ycoord: tokenPos.y, image: tokenImgUrl };
         }
-
-        // Save the data in the database
-        set(ref(db, dataPath), dataToSave)
-            .then(() => {
-                alert("Data added successfully"); //data saved
+        const dataRef = ref(db, dataPath);
+        get(dataRef)
+            .then((snapshot) => {
+                if (!snapshot.exists()) { //check and see if the file path already exists (campaign/game), if it doesn't create new
+                    // Save the data in the database
+                    set(ref(db, dataPath), dataToSave)
+                        .then(() => {
+                            alert("Data added successfully"); //data saved
+                        })
+                        .catch((error) => {
+                            alert("Error adding data: " + error.message); //if something goes wrong
+                        });
+                } else {
+                    // Alert if hte campaign exists
+                    alert("Campaign already exists, enter new campaign name or update the current one");
+                }
             })
-            .catch((error) => {
-                alert("Error adding data: " + error.message); //if something goes wrong
+            .catch((error) => { //in case something else goes wrong
+                alert("Error retrieving data: " + error.message);
             });
     }
 
     const RetData = () => {
         if (!GameName) { //make sure we have a game name to refrence from db
-            alert("Please provide a game name"); 
+            alert("Please provide a game name");
             return;
         }
 
