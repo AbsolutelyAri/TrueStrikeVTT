@@ -1,34 +1,30 @@
-import React, { useRef, useEffect} from "react";
+import React, { useRef, useEffect, useCallback} from "react";
 import styles from './tilemap.module.css'
-import { usePlugins } from "./PluginProvider";
 
 function Tilemap({setSelectedTile}) {
-    const {plugins} = usePlugins()
     const canvasRef = useRef(null)
     const imageRef = useRef(new Image())
     const tiles = useRef([])
     const SIZE_OF_TILE = 32
-    const gridColorPlugin = plugins.find(p => p.name === 'GridColor')
-    
+
+    const drawGrid = useCallback((w, h, ctx, step=32, color='rgba(0,255,217,1)') => {
+        ctx.strokeStyle = color
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        for(let x = 0; x < w + 1; x += step){
+            ctx.moveTo(x, 0.5)
+            ctx.lineTo(x, h + 0.5)
+        }
+        ctx.stroke();
+        ctx.beginPath()
+        for(let y = 0; y < h + 1; y += step){
+            ctx.moveTo(0, y + 0.5)
+            ctx.lineTo(w, y + 0.5)
+        }
+        ctx.stroke();
+    }, [])
 
     useEffect(() => {
-        const drawGrid = (w, h, ctx, step=32) => {
-            const color = gridColorPlugin && gridColorPlugin.enabled ? gridColorPlugin.config.color : 'rgba(0, 255, 217, 1)'
-            ctx.strokeStyle = color
-            ctx.lineWidth = 1
-            ctx.beginPath()
-            for(let x = 0; x < w + 1; x += step){
-                ctx.moveTo(x, 0.5)
-                ctx.lineTo(x, h + 0.5)
-            }
-            ctx.stroke();
-            ctx.beginPath()
-            for(let y = 0; y < h + 1; y += step){
-                ctx.moveTo(0, y + 0.5)
-                ctx.lineTo(w, y + 0.5)
-            }
-            ctx.stroke();
-        }
         const img = imageRef.current
         img.src = `${process.env.PUBLIC_URL}/AITileset.jpg`
         img.onload = () => {
@@ -46,7 +42,8 @@ function Tilemap({setSelectedTile}) {
             console.log(tiles)
             drawGrid(canvasRef.current.width, canvasRef.current.height, ctx)
         }
-    }, [gridColorPlugin])
+        
+    }, [drawGrid])
 
     const onClickTile = (e) => { 
         if(!canvasRef.current) return;
@@ -56,7 +53,7 @@ function Tilemap({setSelectedTile}) {
         const tx = Math.floor(x / SIZE_OF_TILE)
         const ty = Math.floor(y / SIZE_OF_TILE)
         setSelectedTile({x: tx, y: ty})
-    }
+    }   
 
 
     return (
