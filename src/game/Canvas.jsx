@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import Modal from './Modal'
 import styles from './canvas.module.css'
-import {StoreBackground, RetrieveBackground} from './BackgroundUpload'
 
 //import the database from the firebase class
 import { db } from './firebase'
@@ -22,10 +21,7 @@ function Canvas({ selectedTile }) {
     const [GameName, setGameName] = useState('');
 
     useEffect(() => {
-        setModalOpen(true);
-        RetrieveBackground().then(function(url) {
-            setUploadedImg(url);
-        });
+        setModalOpen(true)
     }, [])
 
     const drawGrid = useCallback((w, h, ctx, step = 32, color = 'rgba(0,255,217,1)') => {
@@ -47,9 +43,9 @@ function Canvas({ selectedTile }) {
 
     /* Background image file is updated here. uploadedImg is a data URL representing the image */
     const drawBackgroundImg = useCallback(() => {
-        if (canvasRef.current) {
+        if (uploadedImg && canvasRef.current) {
             const img = new Image();
-            img.src = uploadedImg; // Gets the background image from storage
+            img.src = uploadedImg;
             img.onload = () => {
                 const ctx = canvasRef.current.getContext('2d');
                 ctx.clearRect(0, 0, canvasDims.width, canvasDims.height);
@@ -132,7 +128,7 @@ function Canvas({ selectedTile }) {
         setCollisionMatrix(prevMatrix => {
             const newMatrix = prevMatrix.map(row => [...row])
             newMatrix[y][x] = newMatrix[y][x] ^ 1
-            //console.log(newMatrix)
+            console.log(newMatrix)
             return newMatrix
         })
 
@@ -166,14 +162,10 @@ function Canvas({ selectedTile }) {
     const handleFileChange = (e) => {
         const reader = new FileReader()
         const file = e.target.files[0]
-        reader.readAsArrayBuffer(file)
+        reader.readAsDataURL(file)
         reader.onloadend = () => {
-            StoreBackground(reader.result); // Stores the result in the Firebase Storage
-            RetrieveBackground().then(function(url) {
-                setUploadedImg(url);
-                console.log(url);
-            });
-            console.log("completed handleFileChange");
+            console.log("called filechange")
+            setUploadedImg(reader.result)
         }
         reader.onerror = (error) => {
             console.error("error reading file: ", error)
