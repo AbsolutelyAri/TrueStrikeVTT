@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import Modal from './Modal'
 import styles from './canvas.module.css'
-import {StoreBackground, RetrieveBackground} from './BackgroundUpload'
+// import {StoreBackground, RetrieveBackground} from './BackgroundUpload'
 
 //import the database from the firebase class
 import { db } from './firebase'
@@ -23,9 +23,9 @@ function Canvas({ selectedTile }) {
 
     useEffect(() => {
         setModalOpen(true);
-        RetrieveBackground().then(function(url) {
-            setUploadedImg(url);
-        });
+        // RetrieveBackground().then(function(url) {
+        //     setUploadedImg(url);
+        // });
     }, [])
 
     const drawGrid = useCallback((w, h, ctx, step = 32, color = 'rgba(0,255,217,1)') => {
@@ -109,7 +109,9 @@ function Canvas({ selectedTile }) {
         if (uploadedImg && tokenImgUrl && canvasRef.current) {
             const img = new Image();
             img.src = uploadedImg;
+
             img.onload = () => {
+                drawBackgroundImg()
                 const ctx = canvasRef.current.getContext('2d');
                 ctx.clearRect(0, 0, canvasDims.width, canvasDims.height);
                 const scaleX = canvasRef.current.width / img.width;
@@ -166,13 +168,14 @@ function Canvas({ selectedTile }) {
     const handleFileChange = (e) => {
         const reader = new FileReader()
         const file = e.target.files[0]
-        reader.readAsArrayBuffer(file)
+        reader.readAsDataURL(file)
         reader.onloadend = () => {
-            StoreBackground(reader.result); // Stores the result in the Firebase Storage
-            RetrieveBackground().then(function(url) {
-                setUploadedImg(url);
-                console.log(url);
-            });
+            // StoreBackground(reader.result); // Stores the result in the Firebase Storage
+            // RetrieveBackground().then(function(url) {
+            //     setUploadedImg(url);
+            //     console.log(url);
+            // });
+            setUploadedImg(reader.result)
             console.log("completed handleFileChange");
         }
         reader.onerror = (error) => {
