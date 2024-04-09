@@ -1,0 +1,26 @@
+.Dice-Plugin {
+    position: absolute;
+    top: 30%;
+    left: 20%;
+    transform: translate(-30%, -50%);
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: black;
+    border: 2px solid red;
+    border-radius: 20px;
+    margin: 5px 0;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .Dice-Plugin button {
+    display: block;
+    background-color: black;
+    color: red;
+    border: 2px solid red;
+    border-radius: 20px;
+    padding: 10px 20px;
+    margin: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }

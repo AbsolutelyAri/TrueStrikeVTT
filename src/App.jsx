@@ -22,7 +22,7 @@ import DicePlugin from './Plugins/DicePlugin';
 // };
 
 function App() {
-  const [selectedTile, setSelectedTile] = useState({x: 0, y: 0})
+
 
   const [plugins, setPlugins] = useState([
     {name: "GridColor", enabled: false},
@@ -34,7 +34,7 @@ function App() {
      plugin.name === pluginName ? {...plugin, enabled: !plugin.enabled} : plugin
    ))
   }
-  
+  const [selectedTile, setSelectedTile] = useState({x: 0, y: 0})
   return (
     <PluginProvider>
       <div className='rootElem'>
@@ -66,6 +66,7 @@ function App() {
       </div>
     </PluginProvider>
   );
+  
 }
 
 export default App;
