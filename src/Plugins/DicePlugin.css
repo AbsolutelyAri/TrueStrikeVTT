@@ -24,3 +24,14 @@
     cursor: pointer;
     font-weight: bold;
   }
+
+  .Dice-Plugin input[type="text"] {
+    display: block;
+    background-color: black;
+    color: red;
+    border: 2px solid red;
+    border-radius: 20px;
+    padding: 10px 20px;
+    margin: 8px;
+    font-weight: bold;
+  }
