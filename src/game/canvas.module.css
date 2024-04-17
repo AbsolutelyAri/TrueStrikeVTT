@@ -6,6 +6,7 @@
 }
 
 .modalContainer {
+    font-family: sans-serif;
     background-color: black;
     color: red;
     border: 2px solid red;
@@ -15,6 +16,7 @@
 }
 
 .button {
+    font-family: sans-serif;
     background-color: black;
     color: red;
     border: 2px solid red;
@@ -31,6 +33,7 @@
 }
 
 .fileUploadContainer {
+    font-family: sans-serif;
     display: flex;
     flex-direction: column;
     padding: 10px;
@@ -48,14 +51,14 @@
 }
 
 .customFileUpload {
-    display: inline-block;
-    padding: 6px 12px;
-    cursor: pointer;
+    font-family: sans-serif;
     background-color: black;
+    color: red;
     border: 2px solid red;
     border-radius: 20px;
-    margin: 5px 0;
-    text-align: center;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
     font-weight: bold;
 }
 
@@ -77,5 +80,33 @@
 .dbContainers{
     position: fixed;
     bottom: 0px;
-    right: 0px;
+    
+}
+
+.inputBox {
+    font-family: sans-serif;
+    background-color: E5E7EB;
+    color: black;
+    border: 2px solid red;
+    border-radius: 20px;
+    padding: 10px 20px;
+    margin: 5px;
+    font-weight: bold;
+    width: 150px
+}
+
+.gridDims {
+    font-family: sans-serif;
+    background-color: #E5E7EB;
+    color: black;
+    border: 2px solid red;
+    border-radius: 20px;
+    padding: 10px 20px;
+    margin: 5px;
+    font-weight: bold;
+    width: 150px
+}
+
+.centerLine{
+    text-align: center;
 }

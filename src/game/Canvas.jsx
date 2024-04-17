@@ -413,7 +413,7 @@ function Canvas({selectedTile}) {
     return (
         <div>
             <div className={styles.fileUploadContainer}>
-                <button onClick={openModal} className={styles.button}>Set Canvas Size</button>
+                <button onClick={openModal} className={styles.button}>Canvas Size</button>
                 <div className={styles.labelContainer}>
                     <label htmlFor="backgroundChange" className={styles.customFileUpload}>Upload Background</label>
                     <input type="file" onChange={handleFileChange} accept='image/*' id="backgroundChange" className={styles.hidden}></input>
@@ -423,22 +423,20 @@ function Canvas({selectedTile}) {
                     <input type="file" onChange={handleTokenChange} accept='image/*' id="tokenChange" className={styles.hidden}></input>
                 </div>
             </div>
+            
             <div className={styles.dbContainers}>
-                <div>
-                    <button onClick={AddData}>Add</button>
-                </div>
-                <div>
-                    <button onClick={RetData}>Retrieve</button>
-                </div>
-                <div>
-                    <button onClick={UpdateData}>Update</button>
-                </div>
-                <div>
-                    <button onClick={() => DeleteData(GameName)}>Delete</button>
-                </div>
-                <div>
-                    <input type="text" id="GameName" value={GameName.toString()} onChange={(e) => setGameName(e.target.value)} placeholder="Campaign Name" />
-                </div>
+
+                <input type="text" id="GameName" value={GameName.toString()} className={styles.inputBox} onChange={(e) => setGameName(e.target.value)} placeholder="Enter Campaign Name" />
+
+                <button onClick={AddData} className={styles.button}>Add</button>
+
+                <button onClick={RetData} className={styles.button}>Retrieve</button>
+    
+                <button onClick={UpdateData} className={styles.button}>Update</button>
+                
+                <button onClick={() => DeleteData(GameName)} className={styles.button}>Delete</button>
+                
+                
             </div>
             <div>
             </div>
