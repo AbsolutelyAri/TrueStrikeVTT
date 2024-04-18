@@ -413,7 +413,9 @@ function Canvas({selectedTile}) {
     return (
         <div>
             <div className={styles.fileUploadContainer}>
-                <button onClick={openModal} className={styles.button}>Canvas Size</button>
+                <button onClick={openModal} className={styles.button}>
+                    <label>Canvas Size</label>
+                </button>
                 <div className={styles.labelContainer}>
                     <label htmlFor="backgroundChange" className={styles.customFileUpload}>Upload Background</label>
                     <input type="file" onChange={handleFileChange} accept='image/*' id="backgroundChange" className={styles.hidden}></input>
