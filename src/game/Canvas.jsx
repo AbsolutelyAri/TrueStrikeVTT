@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState, useCallback} from 'react'
 import Modal from './Modal'
 import styles from './canvas.module.css'
+import {handleGoogleLogin} from './Authentication'
 // import {StoreBackground, RetrieveBackground} from './BackgroundUpload'
 
 //import the database from the firebase class
@@ -413,6 +414,7 @@ function Canvas({selectedTile}) {
     return (
         <div>
             <div className={styles.fileUploadContainer}>
+                <button onClick={handleGoogleLogin} className={styles.button}>Login with Google</button>
                 <button onClick={openModal} className={styles.button}>Set Canvas Size</button>
                 <div className={styles.labelContainer}>
                     <label htmlFor="backgroundChange" className={styles.customFileUpload}>Upload Background</label>
