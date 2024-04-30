@@ -22,6 +22,7 @@ export function AuthenticationButton() {
 
     // Checks for change in the state of the authentication
     auth.onAuthStateChanged((user) => {
+        console.log("AuthState has changed");
         if (user) {
             // User is signed in, see docs for a list of available properties
             // https://firebase.google.com/docs/reference/js/v8/firebase.User
@@ -35,6 +36,6 @@ export function AuthenticationButton() {
     });
 
     return (
-        <button className={styles.button} onClick={handleGoogleLogin}>{ButtonText}</button>
+        <button className={styles.loginButton} onClick={handleGoogleLogin}>{ButtonText}</button>
     )
 }

@@ -413,9 +413,11 @@ function Canvas({selectedTile}) {
 
     return (
         <div>
-            <div className={styles.fileUploadContainer}>             
+            <div className={styles.loginButtonContainer}>
+                <AuthenticationButton></AuthenticationButton>  
+            </div>
+            <div className={styles.fileUploadContainer}> 
                 <button onClick={openModal} className={styles.button}>Set Canvas Size</button>
-                <AuthenticationButton></AuthenticationButton>
                 <button onClick={openModal} className={styles.button}>
                     <label>Canvas Size</label>
                 </button>
