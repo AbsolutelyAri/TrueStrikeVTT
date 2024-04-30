@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState, useCallback} from 'react'
 import Modal from './Modal'
 import styles from './canvas.module.css'
+import { AuthenticationButton } from "./Authentication"
 // import {StoreBackground, RetrieveBackground} from './BackgroundUpload'
 
 //import the database from the firebase class
@@ -20,6 +21,7 @@ function Canvas({selectedTile}) {
     const [isModalOpen, setModalOpen] = useState(false)
     const [collisionMatrix, setCollisionMatrix] =  useState(Array.from({length: 24}, () => Array.from({length: 24}, () => 0)))
     const [GameName, setGameName] = useState('');
+
 
     useEffect(() => {
         setModalOpen(true);
@@ -409,10 +411,13 @@ function Canvas({selectedTile}) {
             });
     };
 
-
     return (
         <div>
-            <div className={styles.fileUploadContainer}>
+            <div className={styles.loginButtonContainer}>
+                <AuthenticationButton></AuthenticationButton>  
+            </div>
+            <div className={styles.fileUploadContainer}> 
+                <button onClick={openModal} className={styles.button}>Set Canvas Size</button>
                 <button onClick={openModal} className={styles.button}>
                     <label>Canvas Size</label>
                 </button>
