@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database"; //getting the DB from firebase database
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = { //config file to allow this page to talk to the server
     apiKey: "AIzaSyBajy50H01kDsTgQyPOh_z9z390Zdmiw6E",
@@ -11,5 +12,6 @@ const firebaseConfig = { //config file to allow this page to talk to the server
     appId: "1:285980706870:web:843420b74cc7e950ab3097"
 };
 
-const app = initializeApp(firebaseConfig); //should initilize the page with the DB
+export const app = initializeApp(firebaseConfig); //should initilize the page with the DB
+export const auth = getAuth(app);
 export const db = getDatabase(app);
