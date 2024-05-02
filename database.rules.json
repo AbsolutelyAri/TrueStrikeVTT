@@ -1,0 +1,15 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "Campaigns":{
+      "$item_id":{
+        ".validate": "
+        newData.child('backgroundImage').isString()&&
+        newData.child('token').child('image').isString() ||
+          !newData.child('token').child('image').exists()
+        "
+      }
+    }
+  }
+}
