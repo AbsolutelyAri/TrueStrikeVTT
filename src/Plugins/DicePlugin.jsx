@@ -4,7 +4,6 @@ import Draggable from 'react-draggable';
 import './DicePlugin.css'; // Import the CSS file
 import ReactSlider from 'react-slider';
 import './TextBox.css';
-import { sum } from 'firebase/firestore';
 function DicePlugin() {
   const { plugins } = usePlugins();
   const dicePlugin = plugins.find(plugin => plugin.name === "DicePlugin");
