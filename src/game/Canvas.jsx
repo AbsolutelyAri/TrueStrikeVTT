@@ -209,8 +209,8 @@ function Canvas({selectedTile}) {
         const tx = Math.floor((e.clientX - rect.left) / SIZE_OF_TILE);
         const ty = Math.floor((e.clientY - rect.top) / SIZE_OF_TILE);
         const img = new Image()
-        const sy = selectedTile.x
-        const sx = selectedTile.y
+        const sy = selectedTile.y
+        const sx = selectedTile.x
         img.src = TILESET_IMAGE
         img.onload = () => {
             const ctx = canvasRef.current.getContext('2d')
